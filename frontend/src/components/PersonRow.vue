@@ -1,6 +1,6 @@
 <script lang="ts">
-import {Person} from "@/components/interfaces";
 import {defineComponent, PropType} from "vue";
+import {Person} from "@/model/Persons";
 
 
 export default defineComponent({
@@ -22,7 +22,7 @@ export default defineComponent({
       emit('update:personAge',htmlTarget.value, props.index)
     }
 
-    function onRemovePerson(e: Event) {
+    function onRemovePerson() {
       emit('delete:person', props.index)
     }
     return {onChangedAge, onChangedName, onRemovePerson}

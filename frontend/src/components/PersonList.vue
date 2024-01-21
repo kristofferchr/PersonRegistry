@@ -15,7 +15,7 @@
     </v-responsive>
   </v-container>
 
-  <div class="bottom-actions">
+  <div class="bottom-toolbar">
     <div class = "bg-transparent">
 
     <v-row>
@@ -45,13 +45,11 @@
 .bg-transparent {
   background-color: rgba(82,67,0,0.1) !important;
 }
-.bottom-actions {
+
+.bottom-toolbar {
   position: sticky;
   bottom: 0;
   background-color: white;
-  width: 100%;
-  background-size: cover;
-  /* Additional styling for the sticky footer */
 }
 </style>
 
