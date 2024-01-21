@@ -29,6 +29,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    testImplementation("com.willowtreeapps.assertk:assertk:0.28.0")
 }
 
 tasks.withType<KotlinCompile> {
