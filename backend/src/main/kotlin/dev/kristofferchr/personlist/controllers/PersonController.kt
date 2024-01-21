@@ -1,5 +1,6 @@
 package dev.kristofferchr.personlist.controllers
 
+import dev.kristofferchr.personlist.service.PersonService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -11,21 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import java.util.concurrent.ConcurrentHashMap
 
 @RestController
 @RequestMapping("/api/v1/persons")
-class PersonController {
-    // TODO: PersonController should be split into a PersonService. Eventhough it is not that much logic it will make it simpler when
-    // one introduces a repository and a separation of concerns. Reuse of person logic when other controllers are formed
-    var currentPersonIdCount = 1
-    val persons = ConcurrentHashMap(mutableMapOf(0 to PersonResource("kristoffer", 30)))
-
+class PersonController(
+    val personService: PersonService,
+) {
     @GetMapping
     suspend fun listPersons(): PersonListResponse {
-        return PersonListResponse(
-            persons = persons.values.toList(),
-        )
+        val personResources =
+            personService.getAll().map { PersonResource(it.name, it.age) }
+        return PersonListResponse(personResources)
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -33,15 +30,11 @@ class PersonController {
     suspend fun addPerson(
         @RequestBody request: NewPersonPayload,
     ): PersonListResponse {
-        val newId = currentPersonIdCount
-        val newPerson = PersonResource(request.name, request.age)
+        personService.addPerson(request.name, request.age)
 
-        persons[newId] = newPerson
-        currentPersonIdCount += 1
-
-        return PersonListResponse(
-            persons = persons.values.toList(),
-        )
+        val personResources =
+            personService.getAll().map { PersonResource(it.name, it.age) }
+        return PersonListResponse(personResources)
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -49,7 +42,7 @@ class PersonController {
     suspend fun deletePerson(
         @PathVariable id: Int,
     ) {
-        persons.remove(id)
+        personService.removePerson(id)
     }
 
     @PutMapping("/{id}")
@@ -57,16 +50,17 @@ class PersonController {
         @PathVariable id: Int,
         @RequestBody payload: EditPersonPayload,
     ): ResponseEntity<PersonListResponse> {
-        if (persons[id] == null) {
+        if (!personService.doesPersonExist(id)) {
             return ResponseEntity.notFound().build()
         }
 
-        persons[id] = PersonResource(payload.name, payload.age)
+        personService.editPerson(id, newName = payload.name, newAge = payload.age)
+
+        val personResources =
+            personService.getAll().map { PersonResource(it.name, it.age) }
 
         return ResponseEntity.ok(
-            PersonListResponse(
-                persons = persons.values.toList(),
-            ),
+            PersonListResponse(personResources),
         )
     }
 }
