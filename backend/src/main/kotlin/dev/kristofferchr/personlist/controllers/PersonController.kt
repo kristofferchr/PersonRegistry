@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap
 @RestController
 @RequestMapping("/api/v1/persons")
 class PersonController {
+    // TODO: PersonController should be split into a PersonService. Eventhough it is not that much logic it will make it simpler when
+    // one introduces a repository and a separation of concerns. Reuse of person logic when other controllers are formed
     var currentPersonIdCount = 1
     val persons = ConcurrentHashMap(mutableMapOf(0 to PersonResource("kristoffer", 30)))
 
