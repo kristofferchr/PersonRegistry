@@ -1,14 +1,12 @@
 <template>
   <v-app>
     <v-main>
-      <v-container>
-        <HelloWorld/>
-      </v-container>
+        <PersonList/>
     </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
 //
-import HelloWorld from "@/components/HelloWorld.vue";
+import PersonList from "@/components/PersonList.vue";
 </script>
