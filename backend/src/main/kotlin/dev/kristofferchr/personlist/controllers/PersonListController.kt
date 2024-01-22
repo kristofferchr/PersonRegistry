@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-// TODO: input validation
 @RestController
 @RequestMapping("/api/v1/personlist")
 @CrossOrigin(origins = ["*"], maxAge = 3600)
