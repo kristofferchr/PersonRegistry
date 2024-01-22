@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/personlist")
+// TODO: this CORS annotation is only needed locally when not using nginx. Need to find a better way to do this
 @CrossOrigin(origins = ["*"], maxAge = 3600)
 class PersonListController(val service: PersonsService) {
     @GetMapping
