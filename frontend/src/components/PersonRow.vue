@@ -1,9 +1,18 @@
 <script lang="ts">
 import {defineComponent, PropType} from "vue";
-import {Person} from "@/model/Persons";
+import {Person} from "@/model/persons";
+import {ageRules, nameRules} from "@/utils/validationRule";
 
 
 export default defineComponent({
+  methods: {
+    ageRules() {
+      return ageRules
+    },
+    nameRules() {
+      return nameRules
+    }
+  },
   props: {
     index: Number,
     person: {
@@ -33,10 +42,10 @@ export default defineComponent({
 <template>
   <v-row no-gutters align="stretch">
     <v-col sm="6" class="pr-6">
-      <v-text-field clearable density="compact" label="Navn" variant="outlined" @input='onChangedName' v-model='person.Name'></v-text-field>
+      <v-text-field clearable density="compact" :rules="nameRules()" label="Navn" variant="outlined" @input='onChangedName' v-model='person.name'></v-text-field>
     </v-col>
     <v-col sm="2" class="pr-2">
-      <v-text-field clearable density="compact" label="Alder" variant="outlined" @input='onChangedAge' v-model='person.Age'></v-text-field>
+      <v-text-field clearable density="compact" :rules="ageRules()" label="Alder" variant="outlined" @input='onChangedAge' v-model='person.age'></v-text-field>
     </v-col>
     <v-col sm="1">
       <v-btn variant="text" block height="40" @click="onRemovePerson"> X</v-btn>

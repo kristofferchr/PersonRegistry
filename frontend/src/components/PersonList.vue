@@ -1,37 +1,40 @@
 <template>
-  <v-container class="fill-screen">
-    <v-responsive class="align-center text-center">
-      <h1 class="text-h2 font-weight-bold">Sheldon Coopers mortal enemies</h1>
-      <div class="py-4"/>
-      <div v-for="(person,i) in persons" :key="i">
-        <PersonRow :person="person" :index=i @update:personName="editPersonName" @update:person-age="editPersonAge"
-                   @delete:person="removePerson"/>
+  <v-form @submit.prevent="submit" v-model="isFormValid">
+    <v-container class="fill-screen">
+      <v-responsive class="align-center text-center">
+        <h1 class="text-h2 font-weight-bold">Sheldon Coopers mortal enemies</h1>
+        <div class="py-4"/>
+        <div v-for="(person,i) in persons" :key="i">
+          <PersonRow :person="person" :index=i @update:personName="editPersonName" @update:person-age="editPersonAge"
+                     @delete:person="removePerson"/>
+        </div>
+        <v-row>
+          <v-col sm="2">
+            <v-btn @click="newPerson()" prepend-icon="mdi-plus" width="100%" class="ma-2" variant="outlined">New</v-btn>
+          </v-col>
+        </v-row>
+      </v-responsive>
+    </v-container>
+
+    <div class="bottom-toolbar">
+      <div class="bg-transparent">
+
+        <v-row>
+          <v-col sm="3" offset="2">
+            <v-btn :loading="isReloadLoading" @click="reload" prepend-icon="mdi-reload" width="100%"
+                   class="ma-2 bg-white"
+                   variant="outlined">Reload
+            </v-btn>
+          </v-col>
+          <v-col sm="3">
+            <v-btn :disabled="!isFormValid" :loading="isSubmitLoading" append-icon="mdi-arrow-up-thin" width="100%" color="blue"
+                   type="submit" class="ma-2">Save
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
-      <v-row>
-        <v-col sm="2">
-          <v-btn @click="newPerson()" prepend-icon="mdi-plus" width="100%" class="ma-2" variant="outlined">New</v-btn>
-        </v-col>
-      </v-row>
-    </v-responsive>
-  </v-container>
-
-  <div class="bottom-toolbar">
-    <div class = "bg-transparent">
-
-    <v-row>
-      <v-col sm="3" offset="2">
-        <v-btn :loading="isLoading" @click="reload" prepend-icon="mdi-reload" width="100%" class="ma-2 bg-white"
-               variant="outlined">Reload
-        </v-btn>
-      </v-col>
-      <v-col sm="3">
-        <v-btn @click="submit" :loading="isLoading" append-icon="mdi-arrow-up-thin" width="100%" color="blue"
-               type="submit" class="ma-2">Save
-        </v-btn>
-      </v-col>
-    </v-row>
     </div>
-  </div>
+  </v-form>
 </template>
 
 <script setup lang="ts">
@@ -43,12 +46,15 @@ import {getAllPersons, savePersons} from "@/clients/PersonApiClient";
 
 const persons = ref<Array<Person>>([])
 const deletedPersonIds = ref<Array<number>>([])
+const isFormValid = ref(false)
+
 getAllPersons().then((personresponse) => {
   persons.value = personresponse
 })
 
 const isSubmitLoading = ref(false)
 const isReloadLoading = ref(false)
+
 function newPerson() {
   persons.value.push({id: undefined, name: "", age: ""})
 }
@@ -85,6 +91,13 @@ function submit() {
     isSubmitLoading.value = false
   })
 }
+
+const nameRules = [value => {
+  if (value) return true
+
+  return 'Name is required'
+
+}]
 
 </script>
 
