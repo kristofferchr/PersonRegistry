@@ -1,12 +1,13 @@
 package dev.kristofferchr.personlist.service
 
+import dev.kristofferchr.personlist.controllers.Person
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
 @Service
-class PersonService {
+class PersonsService {
     var currentPersonIdCount = 1
-    val persons = ConcurrentHashMap(mutableMapOf(0 to PersonDto(0, "kristoffer", 30)))
+    var persons = ConcurrentHashMap(mutableMapOf(0 to PersonDto(0, "kristoffer", 30)))
 
     fun getAll(): List<PersonDto> {
         return persons.values.toList()
@@ -27,10 +28,6 @@ class PersonService {
         persons.remove(id)
     }
 
-    fun doesPersonExist(id: Int): Boolean {
-        return persons[id] != null
-    }
-
     fun editPerson(
         id: Int,
         newName: String,
@@ -38,6 +35,33 @@ class PersonService {
     ) {
         persons[id] = PersonDto(id, newName, newAge)
     }
+
+    fun saveAll(
+        currentPersons: List<Person>,
+        deletedPersonIds: List<Int>,
+    ) {
+        deletedPersonIds.forEach {
+            persons.remove(it)
+        }
+
+        val (newPersons, newExistingPersons) = currentPersons.partition { it.id == null }
+
+        newPersons.forEach {
+            addPerson(it.name, it.age)
+        }
+
+        newExistingPersons.forEach {
+            editPerson(it.id.assertNonNull(), it.name, it.age)
+        }
+    }
+}
+
+fun <T> T?.assertNonNull(): T {
+    if (this == null) {
+        throw IllegalStateException("Variable that was marked as non null is null")
+    }
+
+    return this
 }
 
 data class PersonDto(
