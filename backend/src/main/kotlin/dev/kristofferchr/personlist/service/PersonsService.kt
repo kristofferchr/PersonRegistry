@@ -28,10 +28,6 @@ class PersonsService {
         persons.remove(id)
     }
 
-    fun doesPersonExist(id: Int): Boolean {
-        return persons[id] != null
-    }
-
     fun editPerson(
         id: Int,
         newName: String,
