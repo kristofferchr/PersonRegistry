@@ -4,7 +4,6 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import dev.kristofferchr.personlist.service.PersonDto
 import dev.kristofferchr.personlist.service.PersonsService
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
@@ -21,6 +20,28 @@ class PersonListControllerTest {
 
     @Autowired
     lateinit var service: PersonsService
+
+    @Test
+    fun `Should be able to retrieve list of persons`() {
+        service.addPerson("Anniken", 48)
+
+        webTestClient.get().uri("/api/v1/personlist")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.persons.length()").isEqualTo(2)
+            .jsonPath("$.persons[1].name").isEqualTo("Anniken")
+            .jsonPath("$.persons[1].age").isEqualTo(48)
+    }
+
+    @Test
+    fun `Should be receive empty list when there are no persons`() {
+        service.removePerson(0)
+
+        webTestClient.get().uri("/api/v1/personlist")
+            .exchange()
+            .expectStatus().isOk
+            .expectBody().jsonPath("$.persons.length()").isEqualTo(0)
+    }
 
     @Test
     fun `Should be able to save persons and delete`() {
