@@ -11,3 +11,6 @@ RUN mkdir /etc/nginx/templates
 COPY nginx.server.template /etc/nginx/templates/server.conf.template
 
 EXPOSE 80
+
+# Start Nginx when the container starts
+CMD ["nginx", "-g", "daemon off;"]
