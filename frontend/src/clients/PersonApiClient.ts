@@ -11,26 +11,15 @@ export const getAllPersons = async (): Promise<Array<Person>> => {
   return await axiosInstance.get("/personlist")
     .then((response: AxiosResponse<PersonListResponse>) => {
       return response.data.persons
-    }).catch((error: Error | AxiosError) => {
-      console.log(error.message)
-      return []
     })
 }
 
-export const savePersons = async (persons: Array<Person>, deletedPersonIds: Array<number>): Promise<Array<Person>> => {
+export const savePersons = async (persons: Array<Person>, deletedPersonIds: Array<number>): Promise<AxiosResponse> => {
  const payload : SavePersonsPaylod = {
    currentPersons: persons,
    deletedPersonIds: deletedPersonIds
  }
-  await axiosInstance.put("/personlist", payload)
-
-    .then((response: AxiosResponse<any>) => {
-      if (response.status == 204) {
-        console.log("Lagret")
-      }
-    }).catch((error: Error | AxiosError) => {
-      console.log(error.message)
-    })
+  return await axiosInstance.put("/personlist", payload)
 }
 
 interface SavePersonsPaylod{

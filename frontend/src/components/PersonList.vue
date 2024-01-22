@@ -17,6 +17,15 @@
     </v-container>
 
     <div class="bottom-toolbar">
+      <v-container class="pt-0">
+        <v-alert :type="alertType"
+                 :title="alertTitle"
+                 :text="alertMessage"
+                 :model-value="showAlert"
+                 transition="slide-y-transition"
+                 class="mb-5"
+        />
+      </v-container>
       <div class="bg-transparent">
 
         <v-row>
@@ -43,17 +52,38 @@ import PersonRow from "@/components/PersonRow.vue";
 import {ref} from "vue";
 import {Person} from "@/model/persons";
 import {getAllPersons, savePersons} from "@/clients/PersonApiClient";
+import {AxiosError, AxiosResponse} from "axios";
+
+const alertTitle = ref("")
+const alertMessage = ref("")
+const alertType= ref()
+const showAlert = ref(false)
 
 const persons = ref<Array<Person>>([])
 const deletedPersonIds = ref<Array<number>>([])
 const isFormValid = ref(false)
 
-getAllPersons().then((personresponse) => {
-  persons.value = personresponse
-})
-
 const isSubmitLoading = ref(false)
 const isReloadLoading = ref(false)
+
+
+getAllPersons().then((personresponse) => {
+  persons.value = personresponse
+}).catch((error: AxiosError) => {
+  showErrorAlert(error.message)
+})
+
+
+function showErrorAlert(error: string) {
+  alertTitle.value = "Feil"
+  alertMessage.value = error
+  alertType.value = "error"
+  showAlert.value=  true
+
+  setTimeout(()=> {
+    showAlert.value = false
+  }, 15000)
+}
 
 function newPerson() {
   persons.value.push({id: undefined, name: "", age: ""})
@@ -71,10 +101,12 @@ async function reload() {
   isReloadLoading.value = true
   getAllPersons().then((personresponse) => {
     persons.value = personresponse
-  }).finally(() => {
+  }).catch((error: AxiosError) => {
+    showErrorAlert(error.message)
+  })
+    .finally(() => {
     isReloadLoading.value = false
   })
-  console.log(persons)
 }
 
 function removePerson(index: number) {
@@ -87,18 +119,26 @@ function removePerson(index: number) {
 
 function submit() {
   isSubmitLoading.value = true
-  savePersons(persons.value, deletedPersonIds.value).finally(() => {
+  savePersons(persons.value, deletedPersonIds.value)
+    .then((response: AxiosResponse<any>) => {
+      alertTitle.value = "Vellykket"
+      alertMessage.value = "Du har lagret personlisten din"
+      alertType.value = "success"
+      showAlert.value=  true
+      setTimeout(() => {
+        showAlert.value = false
+      }, 3000)
+
+      return response.data
+    })
+    .catch((error: AxiosError) => {
+      showErrorAlert(error.message)
+    })
+    .finally(() => {
     isSubmitLoading.value = false
   })
+
 }
-
-const nameRules = [value => {
-  if (value) return true
-
-  return 'Name is required'
-
-}]
-
 </script>
 
 <style>
