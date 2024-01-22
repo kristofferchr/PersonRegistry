@@ -34,25 +34,6 @@
   </div>
 </template>
 
-<style>
-.fill-screen {
-  height: 100%;
-  min-height: 100vh;
-  background: inherit;
-  z-index: -1;
-}
-
-.bg-transparent {
-  background-color: rgba(82,67,0,0.1) !important;
-}
-
-.bottom-toolbar {
-  position: sticky;
-  bottom: 0;
-  background-color: white;
-}
-</style>
-
 <script setup lang="ts">
 //
 import PersonRow from "@/components/PersonRow.vue";
@@ -90,3 +71,22 @@ function submit() {
 }
 
 </script>
+
+<style>
+.fill-screen {
+  height: 100%;
+  min-height: 100vh;
+  background: inherit;
+  z-index: -1;
+}
+
+.bg-transparent {
+  background-color: rgba(82, 67, 0, 0.1) !important;
+}
+
+.bottom-toolbar {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+}
+</style>
