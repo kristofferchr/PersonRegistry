@@ -6,6 +6,9 @@ on:
       - "main"
       tags:
       - "frontend/*"
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-and-push:
@@ -15,17 +18,22 @@ jobs:
         working-directory:
           ./frontend
     env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository_owner }}/personregistry-frontend
+      REGISTRY: public.ecr.aws
+      IMAGE_NAME: m6q0g2d8/personregistry
     steps:
     - uses: actions/checkout@v2
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        audience: sts.amazonaws.com.cn
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::992382460472:role/github-action
+    - name: Login to Amazon ECR Public
+      id: login-ecr-public
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: public
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
