@@ -38,36 +38,52 @@
 //
 import PersonRow from "@/components/PersonRow.vue";
 import {ref} from "vue";
-import {getOriginalPersons, Person} from "@/model/Persons";
+import {Person} from "@/model/persons";
+import {getAllPersons, savePersons} from "@/clients/PersonApiClient";
 
-const persons = ref<Array<Person>>(getOriginalPersons())
-const isLoading = ref(false)
+const persons = ref<Array<Person>>([])
+const deletedPersonIds = ref<Array<number>>([])
+getAllPersons().then((personresponse) => {
+  persons.value = personresponse
+})
 
+const isSubmitLoading = ref(false)
+const isReloadLoading = ref(false)
 function newPerson() {
-  persons.value.push({Name: "", Age: ""})
+  persons.value.push({id: undefined, name: "", age: ""})
 }
 
 function editPersonName(value: any, index: number) {
-  persons.value[index].Name = value
+  persons.value[index].name = value
 }
 
 function editPersonAge(value: string, index: number) {
-  persons.value[index].Age = value
+  persons.value[index].age = value
 }
 
-function reload() {
-  persons.value = getOriginalPersons()
+async function reload() {
+  isReloadLoading.value = true
+  getAllPersons().then((personresponse) => {
+    persons.value = personresponse
+  }).finally(() => {
+    isReloadLoading.value = false
+  })
+  console.log(persons)
 }
 
 function removePerson(index: number) {
-  persons.value.splice(index, 1)
+  const removedPerson = persons.value.splice(index, 1)[0]
+
+  if (removedPerson.id !== undefined) {
+    deletedPersonIds.value.push(removedPerson.id)
+  }
 }
 
 function submit() {
-  isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
-  }, 2000)
+  isSubmitLoading.value = true
+  savePersons(persons.value, deletedPersonIds.value).finally(() => {
+    isSubmitLoading.value = false
+  })
 }
 
 </script>
