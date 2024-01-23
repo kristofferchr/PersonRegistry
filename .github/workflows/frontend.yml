@@ -20,6 +20,7 @@ jobs:
     env:
       REGISTRY: public.ecr.aws
       IMAGE_NAME: m6q0g2d8/personregistry-frontend
+      BACKEND_HOST: http://backend:8080
     steps:
     - uses: actions/checkout@v2
 
@@ -60,3 +61,5 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          "BACKEND_HOST=${{ env.BACKEND_HOST }}"
