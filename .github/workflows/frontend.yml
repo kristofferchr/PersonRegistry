@@ -21,6 +21,7 @@ jobs:
       REGISTRY: public.ecr.aws
       IMAGE_NAME: m6q0g2d8/personregistry-frontend
       BACKEND_HOST: http://backend:8080
+      VITE_API_URL: https://persons.kristofferchr.dev
     steps:
     - uses: actions/checkout@v2
 
