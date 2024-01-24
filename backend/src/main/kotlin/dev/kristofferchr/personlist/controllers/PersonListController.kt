@@ -28,8 +28,8 @@ class PersonListController(val service: PersonsService) {
         payload.run {
             val invalidPersons =
                 currentPersons.filter {
-                    it.name.isEmpty() ||
-                        !it.name.matches(Regex("^[A-Za-z]+$")) ||
+                    it.name.trim().isEmpty() ||
+                        !it.name.matches(Regex("^[A-Z a-z]+$")) ||
                         it.age > 200 ||
                         it.age < 0
                 }
