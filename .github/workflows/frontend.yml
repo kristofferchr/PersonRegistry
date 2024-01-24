@@ -6,6 +6,9 @@ on:
       - "main"
       tags:
       - "frontend/*"
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-and-push:
@@ -15,17 +18,24 @@ jobs:
         working-directory:
           ./frontend
     env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository_owner }}/personregistry-frontend
+      REGISTRY: public.ecr.aws
+      IMAGE_NAME: m6q0g2d8/personregistry-frontend
+      BACKEND_HOST: http://backend:8080
+      VITE_API_URL: https://persons.kristofferchr.dev
     steps:
     - uses: actions/checkout@v2
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        audience: sts.amazonaws.com
+        aws-region: us-east-1
+        role-to-assume: arn:aws:iam::992382460472:role/github-action
+    - name: Login to Amazon ECR Public
+      id: login-ecr-public
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: public
     - name: Use Node.js
       uses: actions/setup-node@v3
       with:
@@ -41,6 +51,8 @@ jobs:
       uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        flavor: |
+          latest=false
         tags: |
           type=match,pattern=frontend-(.*),group=1
           type=ref,event=branch
@@ -52,3 +64,5 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          "BACKEND_HOST=${{ env.BACKEND_HOST }}"
