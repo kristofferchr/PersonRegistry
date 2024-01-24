@@ -1,0 +1,15 @@
+@startuml
+title Kommunikasjon innenfor docker network
+
+node backend as "PersonRegistry Spring Boot backend"
+
+node frontend as "PersonRegistry Vue frontend"
+node nginx as "nginx reverse proxy" {
+component index.html as homepage
+component "/api" as nginxApi
+}
+
+frontend --> nginxApi : Get or save personlist resource
+nginxApi --> backend : Get or save personlist
+
+@enduml
