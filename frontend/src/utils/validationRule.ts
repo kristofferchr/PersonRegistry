@@ -1,5 +1,5 @@
 export const nameRules = [
-  (v: any) => !!v || 'Navn er påkrevd',
+  (v: any) => v.trim().length > 0 || 'Navn er påkrevd',
   (v: any) => /^[A-Z a-z]+$/.test(v) || 'Kun bokstaver som er gyldig',
 ]
 
