@@ -1,0 +1,49 @@
+@startuml
+title Kommunikasjon fra person til AWS ECS backend service
+
+actor admin
+
+cloud CloudFlareDns
+cloud AWS {
+    frame ECR {
+        node BackendRepoEcr as "image personregistry-backend"
+        node FrontendRepoEcr as "image personregistry-frontend"
+    }
+
+    frame ECS {
+        component TaskDefinitionBackend
+        component TaskDefinitionFrontend
+        component ServiceFrontend {
+            component TaskFrontend {
+                component VueApp
+                component nginx
+            }
+        }
+        component ServiceBackend {
+            component TaskBackend {
+                component SpringBootApp
+            }
+        }
+        component ServiceConnect
+    }
+
+    component ALB
+}
+
+ServiceBackend --> TaskDefinitionBackend : Uses as template for tasks
+ServiceFrontend --> TaskDefinitionFrontend : Uses as template for tasks
+TaskDefinitionFrontend --> FrontendRepoEcr: References image tag
+TaskDefinitionBackend --> BackendRepoEcr: References image tag
+
+admin --> CloudFlareDns : resolve https://persons.kristofferchr.dev
+admin --> ALB : fetch index.html
+ALB --> nginx : route traffic
+
+actor --> ALB: HTTP GET /api/v1/personlist
+actor --> ALB: HTTP PUT /api/v1/personlist
+
+nginx --> ServiceConnect: route traffic
+ServiceConnect --> SpringBootApp: proxy /api/*
+ServiceConnect --> VueApp: Returns index.html
+
+@enduml

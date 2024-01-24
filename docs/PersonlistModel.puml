@@ -1,0 +1,14 @@
+@startuml
+title Personlist model
+
+object person {
+name: String
+age: Int
+}
+
+object Personlist {
+persons: Array<person>
+}
+
+
+@enduml

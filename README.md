@@ -1,8 +1,12 @@
 # PersonRegistry
 
-An application that lists persons and allows CRUD operations.
+An application that lists persons and allows CRUD operations through the vue frontend.
 
 Consists of a Spring Boot kotlin microservice and typescript vue frontend
+
+## Data model
+
+![PersonList model](docs/PersonlistModel.png)
 
 ## Running locally
 
@@ -14,3 +18,7 @@ There are two ways of running frontend and backend together, namely:
     - In dir frontend run `yarn run build` followed by `docker-compose up --build`.,
     - In dir backend run `./gradlew build` followed by `docker-compose up --build`
     - Frontend is now served by nginx and api calls are routed to backend through nginx as well.
+
+### Diagram when running locally
+
+![Diagram docker local network](docs/communicationDockerNetwork.png)

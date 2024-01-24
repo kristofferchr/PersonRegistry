@@ -1,0 +1,24 @@
+@startuml
+
+title Personlist api
+
+frame SpringBootPersonRegistry {
+    node PersonlistController {
+        component GetMapping as "GET /api/v1/personlist"
+        component PutMapping as "PUT /api/v1/personlist"
+        package SaveListPayload {
+        entity currentPersons as "currentPersons: Array<Person>"
+        entity deletedPersonIds  as "deletedPersonIds: Array<Int>"
+        }
+
+    }
+    node PersonService {
+        entity Person
+        entity PersonList
+    }
+}
+
+GetMapping --> PersonList: GetAll
+PutMapping --> PersonService: Create new. edit existing and delete persons
+
+@enduml
