@@ -122,6 +122,18 @@ class PersonListControllerTest {
     }
 
     @Test
+    fun `Should return bad request when name is only whitespaces`() {
+        webTestClient.put().uri("/api/v1/personlist")
+            .bodyValue(
+                SaveListPayload(
+                    currentPersons = listOf(Person(0, "   ", 100)),
+                    deletedPersonIds = listOf(),
+                ),
+            )
+            .exchange()
+            .expectStatus().isBadRequest
+    }
+    @Test
     fun `Should return badrequest when age is above 200`() {
         webTestClient.put().uri("/api/v1/personlist")
             .bodyValue(
