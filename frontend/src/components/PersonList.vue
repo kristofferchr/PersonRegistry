@@ -36,7 +36,8 @@
             </v-btn>
           </v-col>
           <v-col sm="3">
-            <v-btn :disabled="!isFormValid" :loading="isSubmitLoading" append-icon="mdi-arrow-up-thin" width="100%" color="blue"
+            <v-btn :disabled="!isFormValid" :loading="isSubmitLoading" append-icon="mdi-arrow-up-thin" width="100%"
+                   color="blue"
                    type="submit" class="ma-2">Save
             </v-btn>
           </v-col>
@@ -56,7 +57,7 @@ import {AxiosError, AxiosResponse} from "axios";
 
 const alertTitle = ref("")
 const alertMessage = ref("")
-const alertType= ref()
+const alertType = ref()
 const showAlert = ref(false)
 
 const persons = ref<Array<Person>>([])
@@ -78,9 +79,9 @@ function showErrorAlert(error: string) {
   alertTitle.value = "Feil"
   alertMessage.value = error
   alertType.value = "error"
-  showAlert.value=  true
+  showAlert.value = true
 
-  setTimeout(()=> {
+  setTimeout(() => {
     showAlert.value = false
   }, 15000)
 }
@@ -105,8 +106,8 @@ async function reload() {
     showErrorAlert(error.message)
   })
     .finally(() => {
-    isReloadLoading.value = false
-  })
+      isReloadLoading.value = false
+    })
 }
 
 function removePerson(index: number) {
@@ -124,7 +125,7 @@ function submit() {
       alertTitle.value = "Vellykket"
       alertMessage.value = "Du har lagret personlisten din"
       alertType.value = "success"
-      showAlert.value=  true
+      showAlert.value = true
       setTimeout(() => {
         showAlert.value = false
       }, 3000)
@@ -135,8 +136,11 @@ function submit() {
       showErrorAlert(error.message)
     })
     .finally(() => {
-    isSubmitLoading.value = false
-  })
+      isSubmitLoading.value = false
+      getAllPersons().then((p) => {
+        persons.value = p
+      })
+    })
 
 }
 </script>
